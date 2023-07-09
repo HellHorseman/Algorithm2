@@ -6,76 +6,76 @@ import pro.sky.java.course2.Exceptions.ParametrIsNullException;
 
 import java.util.Arrays;
 
-public class StringListImpl implements StringList {
-    private final String[] stringArray;
+public class IntegerListImpl implements IntegerList {
+    private final Integer[] IntegerArray;
     private int size;
 
-    public StringListImpl() {
-        stringArray = new String[5];
+    public IntegerListImpl() {
+        IntegerArray = new Integer[5];
     }
 
-    public StringListImpl(int initSize) {
-        stringArray = new String[initSize];
+    public IntegerListImpl(int initSize) {
+        IntegerArray = new Integer[initSize];
     }
 
     @Override
-    public String add(String item) {
+    public Integer add(Integer item) {
         validateSize();
         validateItem(item);
-        stringArray[size++] = item;
+        IntegerArray[size++] = item;
         return item;
     }
 
     @Override
-    public String add(int index, String item) {
+    public Integer add(int index, Integer item) {
         validateSize();
         validateItem(item);
         validateIndex(index);
         if (index == size) {
-            stringArray[size++] = item;
+            IntegerArray[size++] = item;
             return item;
         }
-        System.arraycopy(stringArray, index, stringArray, index + 1, size - index);
-        stringArray[index] = item;
+        System.arraycopy(IntegerArray, index, IntegerArray, index + 1, size - index);
+        IntegerArray[index] = item;
         size++;
         return item;
     }
 
     @Override
-    public String set(int index, String item) {
+    public Integer set(int index, Integer item) {
         validateIndex(index);
         validateItem(item);
-        stringArray[index] = item;
+        IntegerArray[index] = item;
         return item;
     }
 
     @Override
-    public String remove(String item) {
+    public Integer remove(Integer item) {
         validateItem(item);
         int index = indexOf(item);
         return remove(index);
     }
 
     @Override
-    public String remove(int index) {
+    public Integer remove(int index) {
 validateIndex(index);
-        String item = stringArray[index];
+        Integer item = IntegerArray[index];
         if (index != size) {
-            System.arraycopy(stringArray, index + 1, stringArray, index, size - index);
+            System.arraycopy(IntegerArray, index + 1, IntegerArray, index, size - index);
         }
         size--;
         return item;
     }
 
     @Override
-    public boolean contains(String item) {
+    public boolean contains(Integer item) {
         return indexOf(item) != -1;
     }
 
     @Override
-    public int indexOf(String item) {
+    public int indexOf(Integer item) {
         for (int i = 0; i < size; i++) {
-            if (stringArray[i].equals(item)) {
+            if (IntegerArray[i].equals(item)) {
                 return i;
             }
         }
@@ -83,9 +83,9 @@ validateIndex(index);
     }
 
     @Override
-    public int lastIndexOf(String item) {
+    public int lastIndexOf(Integer item) {
         for (int i = size - 1; i >= 0; i--) {
-            if (stringArray[i].equals(item)) {
+            if (IntegerArray[i].equals(item)) {
                 return i;
             }
         }
@@ -93,13 +93,13 @@ validateIndex(index);
     }
 
     @Override
-    public String get(int index) {
+    public Integer get(int index) {
         validateIndex(index);
-        return stringArray[index];
+        return IntegerArray[index];
     }
 
     @Override
-    public boolean equals(StringList otherList) {
+    public boolean equals(IntegerList otherList) {
         return Arrays.equals(this.toArray(), otherList.toArray());
     }
 
@@ -119,18 +119,18 @@ validateIndex(index);
     }
 
     @Override
-    public String[] toArray() {
-        return Arrays.copyOf(stringArray, size);
+    public Integer[] toArray() {
+        return Arrays.copyOf(IntegerArray, size);
     }
 
-    private void validateItem(String item) {
+    private void validateItem(Integer item) {
         if (item == null) {
             throw new ParametrIsNullException("Parameter Is Null!");
         }
     }
 
     private void validateSize() {
-        if (size == stringArray.length) {
+        if (size == IntegerArray.length) {
             throw new ArrayIsFullException("Array Is Full!");
         }
     }
