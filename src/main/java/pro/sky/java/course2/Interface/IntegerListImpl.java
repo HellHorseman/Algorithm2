@@ -7,7 +7,7 @@ import pro.sky.java.course2.Exceptions.ParametrIsNullException;
 import java.util.Arrays;
 
 public class IntegerListImpl implements IntegerList {
-    private final Integer[] integerArray;
+    private Integer[] integerArray;
     private int size;
 
     public IntegerListImpl() {
@@ -133,7 +133,7 @@ public class IntegerListImpl implements IntegerList {
 
     private void validateSize() {
         if (size == integerArray.length) {
-            throw new ArrayIsFullException("Array Is Full!");
+            grow();
         }
     }
 
@@ -144,15 +144,32 @@ public class IntegerListImpl implements IntegerList {
     }
 
     private void sort(Integer[] arr) {
-        for (int i = 0; i < arr.length - 1; i++) {
-            int minElementIndex = i;
-            for (int j = i + 1; j < arr.length; j++) {
-                if (arr[j] < arr[minElementIndex]) {
-                    minElementIndex = j;
-                }
-            }
-            swapElements(arr, i, minElementIndex);
+        quickSort(arr, 0, arr.length - 1);
+    }
+
+    private void quickSort(Integer[] arr, int begin, int end) {
+        if (begin < end) {
+            int partitionIndex = partition(arr, begin, end);
+
+            quickSort(arr, begin, partitionIndex - 1);
+            quickSort(arr, partitionIndex + 1, end);
         }
+    }
+
+    private int partition(Integer[] arr, int begin, int end) {
+        int pivot = arr[end];
+        int i = (begin - 1);
+
+        for (int j = begin; j < end; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+
+                swapElements(arr, i, j);
+            }
+        }
+
+        swapElements(arr, i + 1, end);
+        return i + 1;
     }
 
     private static void swapElements(Integer[] arr, int indexA, int indexB) {
@@ -179,5 +196,9 @@ public class IntegerListImpl implements IntegerList {
             }
         }
         return false;
+    }
+
+    private void grow() {
+        integerArray = Arrays.copyOf(integerArray, size + size / 2);
     }
 }
