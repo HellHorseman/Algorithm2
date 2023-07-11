@@ -7,22 +7,22 @@ import pro.sky.java.course2.Exceptions.ParametrIsNullException;
 import java.util.Arrays;
 
 public class IntegerListImpl implements IntegerList {
-    private final Integer[] IntegerArray;
+    private Integer[] integerArray;
     private int size;
 
     public IntegerListImpl() {
-        IntegerArray = new Integer[5];
+        integerArray = new Integer[5];
     }
 
     public IntegerListImpl(int initSize) {
-        IntegerArray = new Integer[initSize];
+        integerArray = new Integer[initSize];
     }
 
     @Override
     public Integer add(Integer item) {
         validateSize();
         validateItem(item);
-        IntegerArray[size++] = item;
+        integerArray[size++] = item;
         return item;
     }
 
@@ -32,11 +32,11 @@ public class IntegerListImpl implements IntegerList {
         validateItem(item);
         validateIndex(index);
         if (index == size) {
-            IntegerArray[size++] = item;
+            integerArray[size++] = item;
             return item;
         }
-        System.arraycopy(IntegerArray, index, IntegerArray, index + 1, size - index);
-        IntegerArray[index] = item;
+        System.arraycopy(integerArray, index, integerArray, index + 1, size - index);
+        integerArray[index] = item;
         size++;
         return item;
     }
@@ -45,7 +45,7 @@ public class IntegerListImpl implements IntegerList {
     public Integer set(int index, Integer item) {
         validateIndex(index);
         validateItem(item);
-        IntegerArray[index] = item;
+        integerArray[index] = item;
         return item;
     }
 
@@ -58,10 +58,10 @@ public class IntegerListImpl implements IntegerList {
 
     @Override
     public Integer remove(int index) {
-validateIndex(index);
-        Integer item = IntegerArray[index];
+        validateIndex(index);
+        Integer item = integerArray[index];
         if (index != size) {
-            System.arraycopy(IntegerArray, index + 1, IntegerArray, index, size - index);
+            System.arraycopy(integerArray, index + 1, integerArray, index, size - index);
         }
         size--;
         return item;
@@ -69,13 +69,15 @@ validateIndex(index);
 
     @Override
     public boolean contains(Integer item) {
-        return indexOf(item) != -1;
+        Integer[] integerArrayCopy = toArray();
+        sort(integerArrayCopy);
+        return binarySearch(integerArrayCopy, item);
     }
 
     @Override
     public int indexOf(Integer item) {
         for (int i = 0; i < size; i++) {
-            if (IntegerArray[i].equals(item)) {
+            if (integerArray[i].equals(item)) {
                 return i;
             }
         }
@@ -85,7 +87,7 @@ validateIndex(index);
     @Override
     public int lastIndexOf(Integer item) {
         for (int i = size - 1; i >= 0; i--) {
-            if (IntegerArray[i].equals(item)) {
+            if (integerArray[i].equals(item)) {
                 return i;
             }
         }
@@ -95,7 +97,7 @@ validateIndex(index);
     @Override
     public Integer get(int index) {
         validateIndex(index);
-        return IntegerArray[index];
+        return integerArray[index];
     }
 
     @Override
@@ -120,7 +122,7 @@ validateIndex(index);
 
     @Override
     public Integer[] toArray() {
-        return Arrays.copyOf(IntegerArray, size);
+        return Arrays.copyOf(integerArray, size);
     }
 
     private void validateItem(Integer item) {
@@ -130,8 +132,8 @@ validateIndex(index);
     }
 
     private void validateSize() {
-        if (size == IntegerArray.length) {
-            throw new ArrayIsFullException("Array Is Full!");
+        if (size == integerArray.length) {
+            grow();
         }
     }
 
@@ -139,5 +141,64 @@ validateIndex(index);
         if (index < 0 || index > size) {
             throw new OutOfBoundException("Out Of Bound!");
         }
+    }
+
+    private void sort(Integer[] arr) {
+        quickSort(arr, 0, arr.length - 1);
+    }
+
+    private void quickSort(Integer[] arr, int begin, int end) {
+        if (begin < end) {
+            int partitionIndex = partition(arr, begin, end);
+
+            quickSort(arr, begin, partitionIndex - 1);
+            quickSort(arr, partitionIndex + 1, end);
+        }
+    }
+
+    private int partition(Integer[] arr, int begin, int end) {
+        int pivot = arr[end];
+        int i = (begin - 1);
+
+        for (int j = begin; j < end; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+
+                swapElements(arr, i, j);
+            }
+        }
+
+        swapElements(arr, i + 1, end);
+        return i + 1;
+    }
+
+    private static void swapElements(Integer[] arr, int indexA, int indexB) {
+        int tmp = arr[indexA];
+        arr[indexA] = arr[indexB];
+        arr[indexB] = tmp;
+    }
+
+    private boolean binarySearch(Integer[] arr, Integer item) {
+        int min = 0;
+        int max = arr.length - 1;
+
+        while (min <= max) {
+            int mid = (min + max) / 2;
+
+            if (item == arr[mid]) {
+                return true;
+            }
+
+            if (item < arr[mid]) {
+                max = mid - 1;
+            } else {
+                min = mid + 1;
+            }
+        }
+        return false;
+    }
+
+    private void grow() {
+        integerArray = Arrays.copyOf(integerArray, size + size / 2);
     }
 }
